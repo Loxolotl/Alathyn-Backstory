@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alathyn — Before and After the Abyss</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700;900&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0808;
+    --void-deep:#040303;
+    --abyss-deep:#0a0505;
+    --blood:#5c0d10;
+    --blood-mid:#8c1418;
+    --blood-bright:#c9262c;
+    --blood-glow:#e6444a;
+    --gold-old:#6b5324;
+    --gold:#8a6a2c;
+    --bone:#d7cdb9;
+    --bone-dim:#b7ac97;
+    --ash:#544e46;
+    --ash-cold:#736a63;
+    --smoke:#8a8680;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--void);
+    color:var(--bone);
+    font-family:'Crimson Pro', serif;
+    font-size:19px;
+    line-height:1.75;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  h1,h2,h3,.numeral{
+    font-family:'Cinzel', serif;
+    font-weight:600;
+    letter-spacing:0.02em;
+    margin:0;
+  }
+
+  a{color:var(--blood-glow);}
+
+  /* ---------- AMBIENT SMOG LAYER ---------- */
+  .smog{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    overflow:hidden;
+    mix-blend-mode:screen;
+    opacity:0.5;
+  }
+  .smog span{
+    position:absolute;
+    width:60vmax;
+    height:60vmax;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:0.28;
+    background:radial-gradient(circle, rgba(120,30,30,0.4) 0%, rgba(120,30,30,0) 70%);
+    animation:drift 46s linear infinite;
+  }
+  .smog span:nth-child(1){ top:-15%; left:-10%; animation-duration:52s; }
+  .smog span:nth-child(2){ top:40%; left:60%; animation-duration:64s; animation-direction:reverse; }
+  .smog span:nth-child(3){ top:70%; left:-20%; animation-duration:70s; }
+  body.mode-two .smog span{
+    background:radial-gradient(circle, rgba(160,10,15,0.42) 0%, rgba(160,10,15,0) 70%);
+    opacity:0.34;
+  }
+  @keyframes drift{
+    0%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(8vw,6vh) scale(1.15); }
+    100%{ transform:translate(0,0) scale(1); }
+  }
+
+  .sigil-rings{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    background-image:
+      radial-gradient(circle at 20% 20%, transparent 0 58px, var(--blood-bright) 59px, transparent 61px),
+      radial-gradient(circle at 82% 55%, transparent 0 90px, var(--blood-bright) 91px, transparent 93px),
+      radial-gradient(circle at 45% 85%, transparent 0 40px, var(--blood-bright) 41px, transparent 43px);
+    background-repeat:no-repeat;
+  }
+
+  /* ---------- HERO / MASTHEAD ---------- */
+  .hero{
+    position:relative;
+    min-height:64vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:60px 24px 40px;
+    z-index:2;
+    overflow:hidden;
+    background:var(--void-deep);
+  }
+  .hero-portrait{
+    position:absolute;
+    inset:0;
+    background-image:url('images/alathyn-young-mugshot.png');
+    background-size:auto 105%;
+    background-position:center 38%;
+    background-repeat:no-repeat;
+    opacity:0.18;
+    filter:grayscale(35%) contrast(1.05);
+    -webkit-mask-image:radial-gradient(ellipse 40% 65% at center 45%, black 15%, rgba(0,0,0,0.4) 50%, transparent 74%);
+    mask-image:radial-gradient(ellipse 40% 65% at center 45%, black 15%, rgba(0,0,0,0.4) 50%, transparent 74%);
+  }
+  /* extra fades to hide the hard crop at the edges of the source mugshot */
+  .hero-fade-bottom{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:50%;
+    background:linear-gradient(to bottom, transparent, var(--void-deep) 82%);
+    pointer-events:none;
+  }
+  .hero-fade-side{
+    position:absolute;
+    top:0; bottom:0;
+    width:30%;
+    pointer-events:none;
+  }
+  .hero-fade-side.left{ left:0; background:linear-gradient(to right, var(--void-deep), rgba(4,3,3,0) 100%); }
+  .hero-fade-side.right{ right:0; background:linear-gradient(to left, var(--void-deep), rgba(4,3,3,0) 100%); }
+  .hero .eyebrow{
+    position:relative;
+    font-family:'Cinzel', serif;
+    letter-spacing:0.3em;
+    font-size:12px;
+    color:var(--ash-cold);
+    margin-bottom:22px;
+  }
+  .hero h1{
+    position:relative;
+    font-family:'Cinzel Decorative', serif;
+    font-size:clamp(42px, 9vw, 88px);
+    color:var(--bone);
+    text-shadow:0 0 44px rgba(201,38,44,0.35);
+  }
+  .hero p.tagline{
+    position:relative;
+    margin-top:18px;
+    font-style:italic;
+    color:var(--bone-dim);
+    font-size:20px;
+    max-width:36ch;
+  }
+
+  /* ---------- TOGGLE BAR (the banners, now on top) ---------- */
+  .toggle-bar{
+    position:sticky;
+    top:0;
+    z-index:30;
+    display:flex;
+    max-width:900px;
+    margin:0 auto;
+    padding:14px 20px;
+    gap:16px;
+    background:rgba(6,4,4,0.88);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(140,20,24,0.25);
+  }
+  .chapter-toggle{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:transparent;
+    border:1px solid rgba(139,106,44,0.3);
+    padding:10px 16px;
+    cursor:pointer;
+    text-align:left;
+    transition:border-color 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease;
+    opacity:0.55;
+  }
+  .chapter-toggle .toggle-seal{
+    flex:0 0 auto;
+    width:40px; height:40px;
+    border-radius:50%;
+    border:1px solid var(--gold-old);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel Decorative', serif;
+    font-size:18px;
+    color:var(--bone-dim);
+    background:radial-gradient(circle at 35% 30%, rgba(201,38,44,0.1), rgba(0,0,0,0.5));
+  }
+  .chapter-toggle .toggle-copy{ display:flex; flex-direction:column; }
+  .chapter-toggle .toggle-title{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:0.04em;
+    color:var(--bone-dim);
+  }
+  .chapter-toggle .toggle-sub{
+    font-family:'Crimson Pro', serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--ash-cold);
+    margin-top:2px;
+  }
+  .chapter-toggle.active{
+    opacity:1;
+    border-color:var(--blood-bright);
+    box-shadow:0 0 22px rgba(201,38,44,0.25);
+  }
+  .chapter-toggle.active .toggle-seal{
+    border-color:var(--blood-bright);
+    color:var(--bone);
+    box-shadow:0 0 14px rgba(201,38,44,0.4);
+  }
+  .chapter-toggle.active .toggle-title{ color:var(--bone); }
+  .chapter-toggle.active .toggle-sub{ color:var(--blood-bright); }
+  .chapter-toggle:hover{ opacity:0.85; }
+
+  @media (max-width:620px){
+    .toggle-bar{ flex-direction:column; gap:10px; padding:12px 14px; }
+    .chapter-toggle{ padding:10px 12px; }
+    .chapter-toggle .toggle-sub{ display:none; }
+  }
+
+  /* ---------- CHAPTERS ---------- */
+  main{ position:relative; z-index:2; min-height:60vh; }
+  .chapter{
+    display:none;
+    position:relative;
+    animation:fadeSmokeIn 0.7s ease;
+  }
+  .chapter.active{ display:block; }
+  @keyframes fadeSmokeIn{
+    from{ opacity:0; filter:blur(6px); }
+    to{ opacity:1; filter:blur(0); }
+  }
+  .chapter-one{
+    background:linear-gradient(180deg, var(--void-deep) 0%, #120a09 40%, #150b0a 100%);
+  }
+  .chapter-two{
+    background:linear-gradient(180deg, #0a0505 0%, var(--abyss-deep) 40%, #0c0505 100%);
+  }
+
+  .chapter-content{
+    max-width:1400px;
+    margin:0 auto;
+    display:grid;
+  grid-template-columns:420px minmax(0, 1fr);
+  gap:48px;
+    align-items:start;
+  padding:26px 32px 0;
+}
+
+.portrait-column{
+  position:sticky;
+  top:112px;
+  align-self:start;
+  width:100%;
+  z-index:2;
+}
+
+.portrait-wrap{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  margin:0 auto;
+  background:rgba(12,9,9,0.6);
+  border:1px solid rgba(140,20,24,0.3);
+  box-shadow:0 0 26px rgba(201,38,44,0.08);
+  z-index:2;
+}
+
+/* the glow lives as its own shape behind the portrait, so it never gets
+    clipped by the portrait's own bounding box */
+.portrait-glow{
+  position:absolute;
+  inset:-14% -10%;
+  background:radial-gradient(ellipse at center 42%, rgba(201,38,44,0.4) 0%, rgba(201,38,44,0) 62%);
+  filter:blur(26px);
+  z-index:0;
+  pointer-events:none;
+}
+.portrait-big{
+  position:relative;
+  z-index:1;
+  width:100%;
+  aspect-ratio:4 / 5;
+  overflow:hidden;
+  background:#090707;
+}
+
+.portrait-big img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center top;
+}
+/* plain gradient fade instead of a CSS mask on the <img> itself —
+     masking real <img> elements can freeze their repaint during scroll
+     in some browsers, which is why the portraits were getting "stuck" */
+.portrait-caption{
+  text-align:left;
+  font-family:'Cinzel', serif;
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--ash-cold);
+  margin:12px 0 0;
+  padding-left:2px;
+}
+
+.story-column{
+  width:100%;
+  max-width:740px;
+  margin:0 auto;
+}
+
+@media (max-width:980px){
+  .chapter-content{
+    grid-template-columns:1fr;
+    padding:18px 20px 0;
+    gap:20px;
+  }
+  .portrait-column{
+    position:relative;
+    top:auto;
+    max-width:500px;
+    margin:0 auto;
+  }
+  .portrait-caption{
+    text-align:center;
+    padding-left:0;
+  }
+  .story-column{
+    max-width:100%;
+  }
+}
+
+section.passage{ max-width:640px; margin:0 auto; padding:40px 0; }
+  section.passage h3{ font-size:22px; color:var(--blood-bright); margin-bottom:6px; }
+  section.passage .drop{
+    font-family:'Cinzel Decorative', serif;
+    float:left;
+    font-size:58px;
+    line-height:0.8;
+    padding:6px 10px 0 0;
+    color:var(--blood-mid);
+  }
+  section.passage p{ margin:0 0 18px; color:var(--bone-dim); }
+  section.passage .divider{
+    width:60px; height:1px;
+    margin:36px auto 0;
+    background:linear-gradient(90deg, transparent, var(--blood-mid), transparent);
+  }
+
+  blockquote.voice{
+    max-width:640px;
+    margin:8px auto 40px;
+    padding:18px 26px;
+    border-left:2px solid var(--blood-bright);
+    background:linear-gradient(90deg, rgba(140,20,24,0.08), transparent);
+    font-style:italic;
+    color:var(--bone);
+    font-size:19px;
+    position:relative;
+  }
+  blockquote.voice::before{
+    content:'"';
+    font-family:'Cinzel Decorative', serif;
+    font-size:44px;
+    color:var(--blood-mid);
+    position:absolute;
+    left:-2px; top:-18px;
+    opacity:0.6;
+  }
+  blockquote.voice cite{
+    display:block;
+    margin-top:10px;
+    font-style:normal;
+    font-family:'Cinzel', serif;
+    font-size:11px;
+    letter-spacing:0.2em;
+    color:var(--ash-cold);
+  }
+
+  .figures{
+    max-width:900px;
+    margin:0 auto;
+    padding:16px 0 60px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:22px;
+  }
+  .figure-card{
+    border:1px solid rgba(140,20,24,0.3);
+    padding:24px 22px;
+    background:rgba(18,10,9,0.55);
+    position:relative;
+  }
+  .figure-card .tag{ font-family:'Cinzel', serif; font-size:11px; letter-spacing:0.2em; color:var(--gold); }
+  .figure-card.ally .tag{ color:var(--blood-glow); }
+  .figure-card h4{ font-family:'Cinzel', serif; font-size:19px; margin:8px 0 10px; color:var(--bone); }
+  .figure-card p{ color:var(--bone-dim); font-size:16px; margin:0; line-height:1.6; }
+
+  .threshold{ text-align:center; padding:30px 24px 100px; }
+  .descend-btn{
+    font-family:'Cinzel', serif;
+    letter-spacing:0.15em;
+    font-size:14px;
+    color:var(--bone);
+    background:transparent;
+    border:1px solid var(--blood-mid);
+    padding:18px 38px;
+    cursor:pointer;
+    transition:all 0.4s ease;
+  }
+  .descend-btn:hover{
+    color:var(--void-deep);
+    background:var(--blood-bright);
+    box-shadow:0 0 30px rgba(201,38,44,0.5);
+  }
+
+  /* ---------- ASCENDED-PAGE DECOR: blinking eyes + smoke plumes ---------- */
+.eyes-decor{ position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .eye-glint{
+    position:absolute;
+    width:38px;
+    height:18px;
+    filter:drop-shadow(0 0 10px rgba(230,68,74,0.8));
+}
+
+.eye-glint .lid{
+    position:relative;
+    width:100%;
+    height:100%;
+    background:
+        radial-gradient(circle at center,
+            #ff9d9d 0%,
+            #ff5a5a 20%,
+            #c9262c 40%,
+            transparent 45%);
+    border-radius:50%;
+    animation:blink 7s ease-in-out infinite;
+    animation-delay:var(--d,0s);
+}
+
+.eye-glint .lid::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-top:2px solid rgba(255,180,180,0.8);
+    border-bottom:2px solid rgba(255,180,180,0.8);
+    border-radius:50%;
+}
+
+.eye-glint .lid::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:4px;
+    height:12px;
+    transform:translate(-50%,-50%);
+    background:#180000;
+    border-radius:50%;
+}
+  @keyframes blink{
+    0%, 90%, 100%{ transform:scaleY(1); opacity:0.75; }
+    93%{ transform:scaleY(0.08); opacity:1; }
+    96%{ transform:scaleY(1); opacity:0.75; }
+  }
+
+  .smoke-decor{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+  .plume{
+    position:absolute;
+    bottom:-10%;
+    width:70px; height:240px;
+    background:linear-gradient(to top, rgba(120,116,110,0.28), rgba(120,116,110,0.05) 60%, transparent 100%);
+    filter:blur(16px);
+    opacity:0;
+    animation:rise 11s ease-in infinite;
+    animation-delay:var(--pd, 0s);
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) scaleX(1); opacity:0; }
+    12%{ opacity:0.5; }
+    70%{ opacity:0.25; }
+    100%{ transform:translateY(-70vh) scaleX(2.1); opacity:0; }
+  }
+
+  footer{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:60px 24px 80px;
+    color:var(--ash-cold);
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:0.2em;
+    background:var(--abyss-deep);
+  }
+
+  /* ---------- CHAPTER-SWITCH SMOKE BURST ---------- */
+  #transition-burst{
+    position:fixed; inset:0; z-index:90;
+    pointer-events:none;
+    background:radial-gradient(circle at center, rgba(10,5,5,0.92) 0%, rgba(10,5,5,0) 68%);
+    opacity:0;
+  }
+  #transition-burst.burst-active{ animation:smokeBurst 0.85s ease; }
+  @keyframes smokeBurst{
+    0%{ opacity:0; }
+    35%{ opacity:1; }
+    100%{ opacity:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="smog" aria-hidden="true"><span></span><span></span><span></span></div>
+<div id="transition-burst" aria-hidden="true"></div>
+
+<!-- ================= HERO / MASTHEAD ================= -->
+<div class="hero">
+  <div class="hero-portrait" aria-hidden="true"></div>
+  <div class="hero-fade-side left" aria-hidden="true"></div>
+  <div class="hero-fade-side right" aria-hidden="true"></div>
+  <div class="hero-fade-bottom" aria-hidden="true"></div>
+  <div class="eyebrow">Bringer of Deaths Gift</div>
+  <h1>Alathyn</h1>
+  <p class="tagline">Battle-chaplain of Anorlondo. Warden of the Church. Herald of the true lord of death.</p>
+</div>
+
+<!-- ================= TOGGLE BAR ================= -->
+<div class="toggle-bar" role="tablist" aria-label="Chapters">
+  <button class="chapter-toggle active" data-target="one" role="tab" aria-selected="true" id="toggle-one">
+    <span class="toggle-seal">I</span>
+    <span class="toggle-copy">
+      <span class="toggle-title">Before the Rebirth</span>
+      <span class="toggle-sub">The chaplain who believed the wrong promise</span>
+    </span>
+  </button>
+  <button class="chapter-toggle" data-target="two" role="tab" aria-selected="false" id="toggle-two">
+    <span class="toggle-seal">II</span>
+    <span class="toggle-copy">
+      <span class="toggle-title">After the Rebirth</span>
+      <span class="toggle-sub">The herald who carries the true message of death</span>
+    </span>
+  </button>
+</div>
+
+<main>
+  <!-- ================= CHAPTER I ================= -->
+  <section class="chapter chapter-one active" id="chapter-one">
+    <div class="sigil-rings" aria-hidden="true"></div>
+
+    <div class="chapter-content">
+      <div class="portrait-column">
+        <div class="portrait-wrap">
+          <div class="portrait-glow" aria-hidden="true"></div>
+          <div class="portrait-big">
+            <img src="images/alathyn-young.png" alt="Alathyn before his rebirth, in the black and red robes of the Church of Yorshka, holding a warded tome">
+          </div>
+        </div>
+        <div class="portrait-caption">Alathyn, Warden of the Church</div>
+      </div>
+
+      <div class="story-column">
+        <section class="passage">
+          <h3>The Wall and the Oath</h3>
+          <p><span class="drop">A</span>lathyn was born within sight of Anorlondo's outer wall, in a garrison town that existed for no reason but to feed the army beyond it. There was no question of what he would become. At sixteen he swore the soldier's oath before a captain who did not look up from his ledger, but Alathyn had already been taught his letters by a village priest, and so he was not handed a spear first. He was handed the company's death-rites tome, and told to walk behind the line and read the departing words over whoever the wall did not spare.</p>
+          <p>So much did he learn of the ways of war, and the cost of the oaths that bound them. While he did not hold a blade, he felt every ounce of blood shed on the battlefield.</p>
+          <div class="divider"></div>
+        </section>
+
+        <blockquote class="voice">Thou learnest quick, on the field which prayers are answered and which are only heard.
+          <cite>— Alathyn</cite>
+        </blockquote>
+
+        <section class="passage">
+          <h3>The Hollow at Greywater</h3>
+          <p>The campaign that made him a soldier in truth was fought at Greywater Hollow, a siege that lasted eleven weeks and ended with a third of the company left in the mud. It was there that Ordell Fenn, a quartermaster's son with no business on the front line, dragged Alathyn out from beneath a collapsed palisade, and took the follow-up strike across Alathyn's face instead of his own. Alathyn lost his eye, but kept his life. He has worn the dark since, hair combed forward to cover what the wound left behind, and has never once complained of the trade.</p>
+          <p>It was there, too, that his own captain; a hard, ambitious officer named Reyne Ashcombe, lost the western flank through his own impatience and let a company of green recruits take the blame in his official report. Alathyn was one of the men named. He never forgave the lie.</p>
+          <div class="divider"></div>
+        </section>
+
+        <section class="passage">
+          <h3>The Silence After</h3>
+          <p>Wars don't often end in flashy displays, or the fall of kingdoms, but simply minor border disputes and diplomatic resolutions. But for the soldiers, the war was a long, slow fade into the background, a quiet resignation to the fact that the world had moved on without them. Much the same for Alathyn.</p>
+          <p>It was grief, mostly, that walked him to the doors of the Church of Yorshka. Grief wants an answer, and the Church was in the business of selling one — and it already knew his name from the tome in his hands.</p>
+          <div class="divider"></div>
+        </section>
+
+        <section class="passage">
+          <h3>The Church of Yorshka</h3>
+          <p>The Church taught a doctrine: that death was not an end but a pause, that Astora’s light stretched into the darkest places to gather what belonged to Him and that Suliman. Guardian of frost and forgotten things saint of those left behind. Could with enough prayer and enough silver keep a soul from falling into the abyss until the light returned to take it. Grieving men do not ask if a doctrine is true. They only ask that it be kind.</p>
+          <p>Alathyn took his second oath within the year, and spent the better part of four years as a full relic-warden, guarding the frozen chapels where the Church kept its dead "waiting," tending candles that were never allowed to go out, and believing, mostly, that he had finally found the thing the wall had never given him, peace.</p>
+          <div class="divider"></div>
+        </section>
+
+        <blockquote class="voice">The Church promised me a light that would not fail, and I believed it. I believed it until the day it did.
+          <cite>— Alathyn</cite>
+        </blockquote>
+
+        <section class="passage">
+          <h3>The Crack in the Doctrine</h3>
+          <p>It broke slowly, the way most true things do. A woman named Petra, dying of a wasting fever in the Church's own infirmary, begged not for Astora's light but for the abyss, for an end, plainly, without ceremony. The presiding elder gave her the rites anyway, over her refusal, because an unlit soul was bad for the ledgers.</p>
+          <p>Alathyn asked, afterward, why a soul was denied the one mercy it had asked for. He was told that Petra had not understood her own salvation. He asked again, differently, a week later, after finding an unmarked grave behind the chapel for a beggar the wardens had judged "unworthy of waiting." That time, he was reported.</p>
+          <p>The Inquisitor who took his statement was a man named Ser Colwyn, thin and precise, who explained with real patience that doubt was itself a kind of theft, that Alathyn was stealing certainty from everyone around him who still needed it. Alathyn understood, in that room, that the Church did not fear the abyss. It feared being made unnecessary by it.</p>
+          <div class="divider"></div>
+        </section>
+
+        <blockquote class="voice">She asked but one mercy, and the Church did name it heresy to grant it. I have not forgiven them since, nor do I intend to.
+          <cite>— Alathyn</cite>
+        </blockquote>
+
+        <section class="passage">
+          <h3>The Descent</h3>
+          <p>He left before they could formally cast him out, and found, in the drainage tunnels beneath the lower city, a woman the Church would have called a heretic and everyone else called Sable, a former grave-singer long since exiled from her trade. She was to Alathyn tho, a somewhat kindred spirit. She was cold on the uptake, and kept her distance no matter how much they met, she understood she was not long for this world, but Alathyn still had much to learn. She taught him as much as she knew, of the old faith, of the Abyss, the truth, and a rite to persue it. </p>
+          <p>Sable told him what the Rite would cost. Alathyn, for the first time since Greywater, did not hesitate. He left the tome behind, unopened, on the tunnel floor.</p>
+        </section>
+
+        <div class="figures">
+          <div class="figure-card ally">
+            <div class="tag">ALLY</div>
+            <h4>Ordell Fenn</h4>
+            <p>Quartermaster's son turned soldier. Cost Alathyn the sight in one eye pulling him from the ruins of Greywater Hollow. Went home to his family and never rejoined the ranks — whether he knows what became of his old friend since is a story still unwritten.</p>
+          </div>
+          <div class="figure-card enemy">
+            <div class="tag">ENEMY</div>
+            <h4>Captain Reyne Ashcombe</h4>
+            <p>Blamed his own failure on a company of recruits, Alathyn among them, to save his rank. Still serves the Anorlondo Army, and still believes his lie was a kindness he was owed.</p>
+          </div>
+          <div class="figure-card enemy">
+            <div class="tag">ENEMY</div>
+            <h4>Ser Colwyn</h4>
+            <p>Inquisitor of the Church of Yorshka. Precise, unhurried, and utterly convinced that doubt is theft. Took Alathyn's statement about Petra and filed him as a name to watch.</p>
+          </div>
+          <div class="figure-card ally">
+            <div class="tag">ALLY</div>
+            <h4>Sable</h4>
+            <p>Former grave-singer of the lower city, exiled from her own trade for singing the old rites instead of the Church's approved ones. Led Alathyn to the truth of the Abyss, and to the Rite that ended his old life.</p>
+          </div>
+        </div>
+
+        <div class="threshold">
+          <button class="descend-btn" id="descend-btn">Undergo the Rite</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER II ================= -->
+  <section class="chapter chapter-two" id="chapter-two">
+    <div class="sigil-rings" aria-hidden="true"></div>
+
+    <div class="eyes-decor" aria-hidden="true">
+      <div class="eye-glint" style="top:12%; left:8%;"><div class="lid" style="--d:0.4s;"></div></div>
+      <div class="eye-glint" style="top:22%; left:88%;"><div class="lid" style="--d:2.1s;"></div></div>
+      <div class="eye-glint" style="top:55%; left:5%;"><div class="lid" style="--d:4.3s;"></div></div>
+      <div class="eye-glint" style="top:68%; left:92%;"><div class="lid" style="--d:1.2s;"></div></div>
+      <div class="eye-glint" style="top:85%; left:14%;"><div class="lid" style="--d:5.6s;"></div></div>
+    </div>
+
+    <div class="smoke-decor" aria-hidden="true">
+      <div class="plume" style="left:20%; --pd:0s;"></div>
+      <div class="plume" style="left:48%; --pd:3.5s;"></div>
+      <div class="plume" style="left:74%; --pd:7s;"></div>
+    </div>
+
+    <div class="chapter-content">
+      <div class="portrait-column">
+        <div class="portrait-wrap">
+          <div class="portrait-glow" aria-hidden="true"></div>
+          <div class="portrait-big">
+            <img src="images/alathyn.png" alt="Alathyn after his rebirth, masked in bone and horn, carrying a censer in place of the tome he once bore">
+          </div>
+        </div>
+        <div class="portrait-caption">Alathyn, Herald of the Abyss</div>
+      </div>
+
+      <div class="story-column">
+        <section class="passage">
+          <h3>The Rite</h3>
+          <p><span class="drop">S</span>able led him deep underground, past the drainage tunnels and far beyond the light of the chapels, into a pitch-black cavern in the bedrock. The ritual didn't look anything like a standard Church ceremony—there was no gold and no incense. There was only freezing iron and an old bone mask placed over his face, which he accepted without a fight.</p>
+          <p>He doesn't remember exactly what was chanted over him. He just remembers a heavy, ancient presence sinking into his bones. Horns pushed through his forehead, and his hands twisted into sharp claws. When he finally woke up, his past life as a tome-warden was completely erased from his memory. In his newly transformed hand hung a strange censer that hadn't existed an hour ago, its bell waiting to be rung.</p>
+          <div class="divider"></div>
+        </section>
+</div>
+
+        <blockquote class="voice">Thou wilt ask what it cost me to be reborn. I tell thee truly; it cost me nothing I had not already given away.
+          <cite>— Alathyn</cite>
+        </blockquote>
+
+        <section class="passage">
+          <h3>Holy Prosthesis</h3>
+          <p>After the rebirth, his body was fresh and maliable, a canvas for new darkness to take hold. And as such she guided him torwards his prosthesis. A second set of arms, meant to empower him, bring him power and strength. So that he may carry the weight of his new purpose.</p>
+          <p>He does not claim to serve Morgoth the way the Church served Suliman, with ledgers and relics and comfortable lies. He carries the truest form of peace and forgiveness, death.</p>
+          <div class="divider"></div>
+        </section>
+
+        <blockquote class="voice">I do not promise thee light, nor rest without truth. I promise only that when thine hour comes, I shall not keep the lord from thee.
+          <cite>— Alathyn</cite>
+        </blockquote>
+
+        <section class="passage">
+          <h3>The Hunt Begins</h3>
+          <p>The Church of Yorshka does not forgive apostates who once guarded its own chapels. Ser Colwyn was given leave to find him, and has not stopped looking. Twice now Alathyn has crossed paths with Church wardens sent quietly, without official record, to bring him back "for correction", a phrase that in Colwyn's mouth has never once meant mercy.</p>
+          <p>In the second of those encounters, at a waystation three days from Anorlondo, Alathyn found Ordell Fenn among the wardens' escort, conscripted back into service, unaware of what his old friend had become behind the mask. Neither of them said what they wanted to say. Alathyn let him live, a thought haunting him, as he had willingly kept someone from the lord.</p>
+          <div class="divider"></div>
+        </section>
+
+        <section class="passage">
+          <h3>What He Carries Forward</h3>
+          <p>Alathyn carries with him the weight of his choices and the knowledge of what he has become. He knows that his path is one of isolation and sacrifice, but he also knows that he is not alone in his understanding.</p>
+        </section>
+
+        <div class="figures">
+          <div class="figure-card ally">
+            <div class="tag">ALLY - DECEASED</div>
+            <h4>Sable</h4>
+            <p>Long since passed, but her voice still echoes in his head, either as advice or as a reproach.</p>
+          </div>
+          <div class="figure-card enemy">
+            <div class="tag">ENEMY</div>
+            <h4>Ser Colwyn</h4>
+            <p>Now formally tasked with Alathyn's capture. Doesn't see the hunt as revenge but a necessary correction, making it ever more dangerous.</p>
+          </div>
+          <div class="figure-card enemy">
+            <div class="tag">UNRESOLVED</div>
+            <h4>Ordell Fenn</h4>
+            <p>Conscripted back into Church service, unaware his old friend now stands on the other side of the doctrine he's sworn to enforce. What happens the next time their paths cross is still unwritten.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Aethon — The Vanatidum — Record kept by Alathyn of the Abyss</footer>
+
+<script>
+(function(){
+  const body = document.body;
+  const toggles = document.querySelectorAll('.chapter-toggle');
+  const chapters = {
+    one: document.getElementById('chapter-one'),
+    two: document.getElementById('chapter-two')
+  };
+  const burst = document.getElementById('transition-burst');
+
+  function showChapter(target){
+    Object.entries(chapters).forEach(([key, el])=>{
+      el.classList.toggle('active', key === target);
+    });
+    toggles.forEach(btn=>{
+      const isActive = btn.dataset.target === target;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive);
+    });
+    body.classList.toggle('mode-two', target === 'two');
+
+    burst.classList.remove('burst-active');
+    void burst.offsetWidth;
+    burst.classList.add('burst-active');
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  toggles.forEach(btn=>{
+    btn.addEventListener('click', ()=> showChapter(btn.dataset.target));
+  });
+
+  document.getElementById('descend-btn').addEventListener('click', ()=> showChapter('two'));
+})();
+</script>
+
+</body>
+</html>
